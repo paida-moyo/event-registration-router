@@ -1,0 +1,14 @@
+{
+  "event": "n8n Automation Bootcamp",
+  "event_date": "2026-10-04",
+  "venue": "Abuja",
+  "registrations": [
+    { "fn": "Ada", "ln": "Nwosu", "em": "ada@analyticalengines.io", "tkt": "vip", "amt": 75000, "pd": true },
+    { "fn": "Musa", "ln": "Bello", "em": "musa@kanofoods.com", "tkt": "regular", "amt": 25000, "pd": true },
+    { "fn": "Ife", "ln": "Adeyemi", "em": "ife@lagoslogistics.com", "tkt": "student", "amt": 10000, "pd": false },
+    { "fn": "Sarah", "ln": "Kent", "em": "sarah@northwind.co.uk", "tkt": "vip", "amt": 75000, "pd": true },
+    { "fn": "Tunde", "ln": "Okafor", "em": "tunde@sunrisehealth.ng", "tkt": "regular", "amt": 25000, "pd": false },
+    { "fn": "Ngozi", "ln": "Eze", "em": "ngozi@brightpath.ng", "tkt": "complimentary", "amt": 0, "pd": true },
+    { "fn": "Chidi", "ln": "Obi", "em": "chidi@meridian.ng", "tkt": "student", "amt": 10000, "pd": true }
+  ]
+}

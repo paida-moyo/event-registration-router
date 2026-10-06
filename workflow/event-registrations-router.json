@@ -1,0 +1,751 @@
+{
+  "name": "Event Registrations: Split and Route by Ticket Type",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "event-registrations",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "cdf231e3-9ab2-4ef8-94d4-a2d090a59503",
+      "name": "Webhook",
+      "webhookId": "REPLACE_WITH_YOUR_WEBHOOK_ID"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "body.registrations",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        176,
+        0
+      ],
+      "id": "2572bc92-948d-4ff4-84cf-1da9aaba6dd4",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b7f80a0f-df5e-4a4f-9035-cdadd45a2b6b",
+              "name": "first_name",
+              "value": "={{ $json['body.registrations'].fn }}",
+              "type": "string"
+            },
+            {
+              "id": "e66bd561-3720-4b4b-9fb9-9c59fc688736",
+              "name": "last_name",
+              "value": "={{ $json['body.registrations'].ln }}",
+              "type": "string"
+            },
+            {
+              "id": "12a061d5-9d61-4699-a367-4428b3c47b8d",
+              "name": "email",
+              "value": "={{ $json['body.registrations'].em }}",
+              "type": "string"
+            },
+            {
+              "id": "c15c696c-2f60-462b-b31f-0148eae1a2e6",
+              "name": "ticket_type",
+              "value": "={{ $json['body.registrations'].tkt }}",
+              "type": "string"
+            },
+            {
+              "id": "afb61d01-11b2-4ca5-96b2-baa623ba3e38",
+              "name": "amount",
+              "value": "={{ $json['body.registrations'].amt }}",
+              "type": "number"
+            },
+            {
+              "id": "ccf54a19-5c24-4d63-b521-169920d82ede",
+              "name": "paid",
+              "value": "={{ $json['body.registrations'].pd }}",
+              "type": "boolean"
+            },
+            {
+              "id": "ce701327-0c6f-4618-b195-633dcfeb35fe",
+              "name": "full_name",
+              "value": "={{ $json['body.registrations'].fn }} {{ $json['body.registrations'].ln }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        336,
+        0
+      ],
+      "id": "a95966bc-2695-4679-962b-768416c128be",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.ticket_type?.trim()?.toLowerCase() }}",
+                    "rightValue": "vip",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "ccad8215-f723-4a85-b6ea-9991ca5644a8"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "VIP"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "72301b0f-e191-4c90-aabc-310ad6f980d4",
+                    "leftValue": "={{ $json.ticket_type?.trim()?.toLowerCase()}}",
+                    "rightValue": "regular",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Regular"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "e6273f5f-0b55-443a-ad8d-c2690077985b",
+                    "leftValue": "={{ $json.ticket_type?.trim()?.toLowerCase() }}",
+                    "rightValue": "student",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Student"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "Needs Review"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        512,
+        -32
+      ],
+      "id": "96523e71-9931-4042-9b3a-8c8c78edfe30",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_YOUR_SPREADSHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Event Registrations: Split and Route by Ticket Type",
+          "cachedResultUrl": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "VIP",
+          "cachedResultUrl": ""
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "first_name": "={{ $json.first_name }}",
+            "email": "={{ $json.email }}",
+            "ticket_type": "={{ $json.ticket_type }}",
+            "amount": "={{ $json.amount }}",
+            "paid": "={{ $json.paid }}",
+            "full_name": "={{ $json.full_name }}",
+            "last_name": "={{ $json.last_name }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "first_name",
+              "displayName": "first_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "last_name",
+              "displayName": "last_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ticket_type",
+              "displayName": "ticket_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "amount",
+              "displayName": "amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "paid",
+              "displayName": "paid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "full_name",
+              "displayName": "full_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        832,
+        -224
+      ],
+      "id": "ccad1088-f3f6-4d27-a63f-642303bce22a",
+      "name": "Append row in VIP sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REPLACE_WITH_YOUR_CREDENTIAL_ID",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_YOUR_SPREADSHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Event Registrations: Split and Route by Ticket Type",
+          "cachedResultUrl": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 578954280,
+          "mode": "list",
+          "cachedResultName": "Regular",
+          "cachedResultUrl": ""
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "first_name": "={{ $json.first_name }}",
+            "ticket_type": "={{ $json.ticket_type }}",
+            "amount": "={{ $json.amount }}",
+            "paid": "={{ $json.paid }}",
+            "full_name": "={{ $json.full_name }}",
+            "email": "={{ $json.email }}",
+            "last_name": "={{ $json.last_name }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "first_name",
+              "displayName": "first_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "last_name",
+              "displayName": "last_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ticket_type",
+              "displayName": "ticket_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "amount",
+              "displayName": "amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "paid",
+              "displayName": "paid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "full_name",
+              "displayName": "full_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        832,
+        -64
+      ],
+      "id": "1bc60ec4-0540-4847-bbba-6be9a2b4e152",
+      "name": "Append row in Regular sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REPLACE_WITH_YOUR_CREDENTIAL_ID",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_YOUR_SPREADSHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Event Registrations: Split and Route by Ticket Type",
+          "cachedResultUrl": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1379492480,
+          "mode": "list",
+          "cachedResultName": "Student",
+          "cachedResultUrl": ""
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "first_name": "={{ $json.first_name }}",
+            "ticket_type": "={{ $json.ticket_type }}",
+            "amount": "={{ $json.amount }}",
+            "paid": "={{ $json.paid }}",
+            "full_name": "={{ $json.full_name }}",
+            "email": "={{ $json.email }}",
+            "last_name": "={{ $json.last_name }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "first_name",
+              "displayName": "first_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "last_name",
+              "displayName": "last_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ticket_type",
+              "displayName": "ticket_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "amount",
+              "displayName": "amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "paid",
+              "displayName": "paid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "full_name",
+              "displayName": "full_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        832,
+        96
+      ],
+      "id": "060a6749-0044-45ab-b174-eaf648d380dd",
+      "name": "Append row in Students sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REPLACE_WITH_YOUR_CREDENTIAL_ID",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_YOUR_SPREADSHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Event Registrations: Split and Route by Ticket Type",
+          "cachedResultUrl": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1026732984,
+          "mode": "list",
+          "cachedResultName": "Needs Review",
+          "cachedResultUrl": ""
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "first_name": "={{ $json.first_name }}",
+            "email": "={{ $json.email }}",
+            "ticket_type": "={{ $json.ticket_type }}",
+            "amount": "={{ $json.amount }}",
+            "paid": "={{ $json.paid }}",
+            "full_name": "={{ $json.full_name }}",
+            "last_name": "={{ $json.last_name }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "first_name",
+              "displayName": "first_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "last_name",
+              "displayName": "last_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ticket_type",
+              "displayName": "ticket_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "amount",
+              "displayName": "amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "paid",
+              "displayName": "paid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "full_name",
+              "displayName": "full_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        832,
+        288
+      ],
+      "id": "42500002-128b-46a4-a537-109c417e1d0f",
+      "name": "Append row in Needs Review sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REPLACE_WITH_YOUR_CREDENTIAL_ID",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Append row in VIP sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append row in Regular sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append row in Students sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append row in Needs Review sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "2cd3bfe1-6f0b-48aa-b4eb-43145f4a537b",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "id": "EzgltaFMqBYTmJfK",
+  "tags": []
+}
