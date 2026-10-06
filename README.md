@@ -1,6 +1,6 @@
 # Event Registration Router (n8n)
 
-An n8n workflow that takes a bundled batch of event registrations, splits them into one record per person, cleans up the field names, and sends each person to a separate Google Sheets tab based on their ticket type. Anything with a ticket type the workflow doesn't recognise goes to its own review tab, so nobody gets lost.
+An n8n workflow that takes a bundled batch of event registrations, splits them into one record per person, cleans up the field names, and sends each person to a separate Google Sheets tab based on their ticket type. Anything with a ticket type the workflow doesn't recognise goes to its own review tab, so no information gets lost.
 
 ![Workflow canvas](screenshots/workflow-canvas.png)
 
