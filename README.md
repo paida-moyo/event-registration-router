@@ -109,4 +109,4 @@ The names and email addresses in the sample data are test data supplied with the
 
 Receiving data through webhooks, reshaping nested JSON into individual records, mapping fields and setting data types, conditional routing with a fallback so no record is dropped, connecting to Google Sheets, and asking the right questions before building instead of filling the gaps with assumptions.
 
-Built with n8n and Google Sheets by Paidamoyo, Clarity Desk.
+Built with n8n and Google Sheets by Paidamoyo.
